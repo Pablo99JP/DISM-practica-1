@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: API de Fichajes
+  version: 1.0.0
+  description: API para gestionar usuarios, fichajes, trabajos y claves API
+
+paths:
+  /usuarios:
+    get:
+      summary: Listar usuarios
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear usuario
+      responses:
+        '201':
+          description: Creado
+
+  /usuarios/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Obtener usuario
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Actualizar usuario
+      responses:
+        '200':
+          description: Actualizado
+    delete:
+      summary: Borrar usuario
+      responses:
+        '204':
+          description: Eliminado
+
+  /fichajes:
+    get:
+      summary: Listar fichajes
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear fichaje
+      responses:
+        '201':
+          description: Creado
+
+  /fichajes/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Obtener fichaje
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Actualizar fichaje
+      responses:
+        '200':
+          description: Actualizado
+    delete:
+      summary: Borrar fichaje
+      responses:
+        '204':
+          description: Eliminado
+
+  /trabajos:
+    get:
+      summary: Listar trabajos
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear trabajo
+      responses:
+        '201':
+          description: Creado
+
+  /trabajos/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Obtener trabajo
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Actualizar trabajo
+      responses:
+        '200':
+          description: Actualizado
+    delete:
+      summary: Borrar trabajo
+      responses:
+        '204':
+          description: Eliminado
+
+  /apikey:
+    get:
+      summary: Listar apikeys
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear apikey
+      responses:
+        '201':
+          description: Creado
+
+  /apikey/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Obtener apikey
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Actualizar apikey
+      responses:
+        '200':
+          description: Actualizado
+    delete:
+      summary: Borrar apikey
+      responses:
+        '204':
+          description: Eliminado
