@@ -4,7 +4,24 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-button expand="full" routerLink="/home">Inicio</ion-button>
-  <ion-button expand="full" routerLink="/consulta-fichajes">Consulta de fichajes</ion-button>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ng-container *ngIf="!tieneFichajeAbierto">
+    <ion-item>
+      <ion-label>Trabajo:</ion-label>
+      <ion-select [(ngModel)]="trabajoSeleccionado">
+        <ion-select-option *ngFor="let t of trabajos" [value]="t.IdTrabajo">
+          {{ t.Nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-button expand="full" (click)="iniciarFichaje()">Iniciar
+      fichaje</ion-button>
+  </ng-container>
+
+  <ng-container *ngIf="tieneFichajeAbierto">
+    <p>Tienes un fichaje abierto desde {{ fichajeAbierto.FechaHoraEntrada
+      | date:'short' }}.</p>
+    <ion-button expand="full" color="danger" (click)="cerrarFichaje()">Cerrar fichaje</ion-button>
+  </ng-container>
+
 </ion-content>
