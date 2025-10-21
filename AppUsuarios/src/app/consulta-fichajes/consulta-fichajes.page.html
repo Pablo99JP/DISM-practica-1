@@ -6,6 +6,28 @@
 
 
 <ion-content class="ion-padding">
-  <ion-button expand="full" routerLink="/registrar-fichaje">Registrar fichaje</ion-button>
-  <ion-button expand="full" routerLink="/home">Inicio</ion-button>
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Desde:</ion-label>
+        <ion-datetime displayFormat="dd/MM/yyyy" [(ngModel)]="fechaDesde"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>Hasta:</ion-label>
+        <ion-datetime displayFormat="dd/MM/yyyy" [(ngModel)]="fechaHasta"></ion-datetime>
+      </ion-item>
+      <ion-button expand="full" (click)="filtrarFichajes()">Filtrar</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-item *ngFor="let f of fichajes">
+      <ion-label>
+        <h2>{{ f.IdFichaje }}</h2>
+        <p>Entrada: {{ f.FechaHoraEntrada | date:'short' }}</p>
+        <p *ngIf="f.FechaHoraSalida">Salida: {{ f.FechaHoraSalida | date:'short' }}</p>
+        <p *ngIf="!f.FechaHoraSalida">Salida: ---</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>
