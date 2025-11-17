@@ -7,30 +7,30 @@ export const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
+        path: 'gestion-usuarios',
         loadComponent: () =>
-          import('../tab1/tab1.page').then((m) => m.Tab1Page),
+          import('../gestion-usuarios/gestion-usuarios.page').then((m) => m.GestionUsuariosPage),
       },
       {
-        path: 'tab2',
+        path: 'gestion-trabajos',
         loadComponent: () =>
-          import('../tab2/tab2.page').then((m) => m.Tab2Page),
+          import('../gestion-trabajos/gestion-trabajos.page').then((m) => m.GestionTrabajosPage),
       },
       {
-        path: 'tab3',
+        path: 'gestion-fichajes',
         loadComponent: () =>
-          import('../tab3/tab3.page').then((m) => m.Tab3Page),
+          import('../gestion-fichajes/gestion-fichajes.page').then((m) => m.GestionFichajesPage),
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/gestion-usuarios',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/gestion-usuarios',
     pathMatch: 'full',
   },
 ];
