@@ -1,17 +1,62 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
+    <ion-title>Consulta de Fichajes</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <!-- Filtro de fechas -->
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Desde:</ion-label>
+        <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="fechaDesde" presentation="date">
+        </ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Hasta:</ion-label>
+        <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="fechaHasta" presentation="date">
+        </ion-datetime>
+      </ion-item>
+
+      <ion-button expand="full" (click)="filtrarFichajes()">
+        Filtrar
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista de fichajes -->
+  <ion-list *ngIf="fichajes.length > 0">
+    <ion-item *ngFor="let fichaje of fichajes">
+      <ion-label>
+        <h2>{{ fichaje.NombreTrabajo || 'Sin trabajo asignado' }}</h2>
+        <p><strong>Entrada:</strong> {{ fichaje.FechaHoraEntrada | date:'short' }}</p>
+        <p *ngIf="fichaje.FechaHoraSalida">
+          <strong>Salida:</strong> {{ fichaje.FechaHoraSalida | date:'short' }}
+        </p>
+        <p *ngIf="!fichaje.FechaHoraSalida" style="color: orange;">
+          <strong>En curso</strong>
+        </p>
+        <p *ngIf="fichaje.HorasTrabajadas">
+          <strong>Horas:</strong> {{ fichaje.HorasTrabajadas }}
+        </p>
+        <p>
+          <strong>Ubicación:</strong>
+          {{ fichaje.direccion || 'Cargando ubicación...' }}
+        </p>
+      </ion-label>
+    </ion-item>
+    </ion-list>
+
+  <!-- Mensaje si no hay fichajes -->
+  <ion-card *ngIf="fichajes.length === 0">
+    <ion-card-content>
+      <p style="text-align: center; color: gray;">
+        No hay fichajes en el rango seleccionado
+      </p>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>

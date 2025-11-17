@@ -1,17 +1,45 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
+    <ion-title>Registrar Fichaje</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <!-- Si NO tiene fichaje abierto: mostrar formulario para iniciar -->
+  <ng-container *ngIf="!tieneFichajeAbierto">
+    <h2>Iniciar Nuevo Fichaje</h2>
+
+    <ion-item>
+      <ion-label>Selecciona un trabajo:</ion-label>
+      <ion-select [(ngModel)]="trabajoSeleccionado" placeholder="Elige trabajo">
+        <ion-select-option *ngFor="let trabajo of trabajos" [value]="trabajo.IdTrabajo">
+          {{ trabajo.Nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="full" (click)="iniciarFichaje()" [disabled]="!trabajoSeleccionado">
+      Iniciar Fichaje
+    </ion-button>
+  </ng-container>
+
+  <!-- Si tiene fichaje abierto: mostrar opción para cerrar -->
+  <ng-container *ngIf="tieneFichajeAbierto">
+    <h2>Fichaje en Curso</h2>
+
+    <ion-item>
+      <ion-label>
+        <h3>Fichaje Activo</h3>
+        <p><strong>Trabajo:</strong> {{ nombreTrabajoActivo }}</p>
+        <p><strong>Entrada:</strong> {{ fichajeAbierto?.FechaHoraEntrada | date:'short' }}</p>
+        <p><strong>Ubicación:</strong> {{ direccionFichaje }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-button expand="full" color="danger" (click)="cerrarFichaje()">
+      Cerrar Fichaje
+    </ion-button>
+  </ng-container>
+
 </ion-content>
