@@ -1,0 +1,107 @@
+PRÁCTICA 1.
+El objetivo de la práctica es crear un sistema de registro horario, capaz de gestionar los fichajes
+de los trabajadores de una organización para mantener un control de las horas realizadas y
+trabajos realizados. El funcionamiento del sistema será el siguiente:
+
+1. Desde una AppAdmin se crearán los usuarios con sus perfiles.
+	a. Para ello tendremos una página que al igual que los ejercicios guiados nos
+	permite gestionar (Consultar,Insertar,Borrar,Actualizar) los usuarios, así como
+	los trabajos a realizar.
+2. Posteriormente habrá una AppUsuarios donde los usuarios al acceder podrán:
+	a. Realizar un fichaje y asociarlo a un trabajo (en caso de no tener ningún fichaje
+	previo).
+	b. En caso de disponer de un fichaje previo en un periodo de tiempo inferior a 12
+	horas, se mostrará dicho fichaje-trabajo permitiendo fichar y cerrando el
+	fichaje.
+	c. Adicionalmente podrán consultar sus fichajes filtrando entre fechas.
+3. Finalmente. desde la AppAdmin podremos:
+	a. Mostrar un listado con los diferentes fichajes realizadosfiltrando por un usuario
+	en un intervalo de fechas.
+
+Para esto se plantea la siguiente arquitectura:
+Como se aprecia en la arquitectura propuesta, tendremos dos aplicaciones implementadas
+ambas mediante Ionic, las cuales conectarán con unos Servicios Rest implementados mediante
+nodejs (previamente diseñados con OpenApi y generados el código con el generador indicado
+en los ejercicios guiados), estos se encargarán de gestionar los datos persistidos en una BD
+MySql.
+
+AppUsuarios
+Consistirá en una App con las siguientes páginas:
+	• Página Inicial, con dos opciones:
+		o Registrar fichaje
+		o Consulta Fichajes
+	• Página Registrar fichaje, al mostrar la página:
+		o En caso de no tener ningún fichaje en 12 horas, se mostrará la opción de iniciar
+		un fichaje nuevo asociándole un trabajo:
+	▪ Seleccionando el trabajo de los creados con la AppAdmin.
+	▪ Generando un nuevo registro que incluya: Fecha-Hora Entrada,Trabajo,
+	Geolocalización.
+		o En caso de tener fichaje en el intervalo de 12 horas anteriores, se indicará que
+		se va a finalizar dicho fichaje.
+	▪ Actualizando el registro del fichaje con la fecha-hora de salida.
+	• Página Consulta Fichajes, en esta página, al abrirla se mostrarán los fichajes realizados
+	en ese día en forma de listado incluyendo:
+		o Fecha-Hora entrada, Fecha-Hora salida, Trabajo y georreferenciación.
+
+AppAdmin
+Consistirá en una App con las siguientes páginas:
+	• Página inicial, donde mostraremos un botón para acceder a cada una de las siguientes
+	páginas:
+		o Gestión Usuarios.
+		o Gestión Trabajos.
+		o Gestión Fichajes.
+	• Gestión Usuarios, mostrará un listado de usuarios y permitirá crear nuevos registros,
+	borrar y actualizar.
+		o Se mostrarán los campos más relevantes en el listado y en la vista detalle se
+		mostrarán todos los campos.
+	• Gestión Trabajos, mostrará un listado de trabajos y permitirá crear nuevos registros,
+	borrar y actualizar.
+		o Se mostrarán los campos más relevantes en el listado y en la vista detalle se
+		mostrarán todos los campos.
+	• Gestión Fichajes, mostrará un listado de fichajes, permitiendo filtrar por fechas y
+		usuarios (searchbar):
+		o Al mostrar esta información en una lista, mostraremos usuario, fecha-hora de
+		entrada, fecha-hora de salida, el trabajo realizado y tendremos un botón que alpulsarlo mostrará un mapa con un punto 			indicando la dirección donde se ha fichado.
+
+Base de Datos (MySQL)
+Ambas Apps, compartirán datos a través de los Servicios Web necesarios, teniendo la siguiente
+estructura de BD:
+• Usuarios
+o IdUsuario: integer, (Clave Primaria, No Nulo)
+o Nombre: string, 100 (No Nulo)
+o Usuario: string, 50
+o Clave: string, 50
+• Fichajes
+o IdFichaje: integer (Clave Primario, No Nulo, AutoIncremental)
+o FechaHoraEntrada: datetime
+o FechaHoraSalida: datetime
+o HorasTrabajadas: integer
+o IdTrabajo: integer
+o IdUsuario: integer
+o GeolocalizacionLatitud: float
+o GeolocalizacionLongitud: float
+• Trabajos
+o IdTrabajo: integer, (Clave Primaria, No Nulo)
+o Nombre: string, 200 (No Nulo)
+• ApiKey
+o idKey:integer, (Clave Primaria, No Nulo, AutoIncremental)
+o Key: string, 50 (No Nulo)
+Servicios Web (Nodejs)
+Se deberá de diseñar mediante OpenApi los servicios web Rest necesarios con todas las opciones
+disponibles para un CRUD, así como las consultas necesarias. Posteriormente mediante el
+codegen, generar el stub para añadir en este nuestra lógica de negocio.
+Servicios Web necesarios:
+• Usuarios
+• Fichajes
+• Trabajos
+• ApiKey
+
+Optativo
+Para optar a la máxima nota se debe de implementar un mecanismo de Login en la App, el cual
+al iniciar la aplicación solicite un usuario y contraseña, la aplicación deberá de acceder a un
+servicio previamente creado en nodejs el cual validará en la tabla de usuarios de la BD.
+Se valorará positivamente el empleo de las siguientes características:
+• Uso de una ApiKey en los Servicios Web, para validar el uso de las Apis mediante una
+key almacenada en BD.
+• Generación aplicación PWA.
+
