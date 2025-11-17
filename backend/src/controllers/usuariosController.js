@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 //GET /usuarios - Obtener todos los usuarios
 exports.getUsuarios = (req, res) => {
-    db.query('SELECT IdUsuario, Nombre, Usuario FROM usuario', (err, results) => {
+    db.query('SELECT IdUsuario, Nombre, Usuario FROM usuarios', (err, results) => {
         if (err) {
             console.error('Error al obtener usuarios:', err);
             return res.status(500).json({ error: 'Error interno del servidor' });
@@ -33,7 +33,7 @@ exports.createUsuarios = (req, res) => {
         return res.status(400).json({ message: 'El nombre es obligatorio' });
     }
 
-    db.query('INSERT INTO usuario (Nombre, Usuario, Clave) VALUES (?, ?, ?)', [Nombre, Usuario, Clave], (err, results) => {
+    db.query('INSERT INTO usuarios (Nombre, Usuario, Clave) VALUES (?, ?, ?)', [Nombre, Usuario, Clave], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Error al crear el usuario' });
         }
@@ -50,7 +50,7 @@ exports.updateUsuarios = (req, res) => {
     const { id } = req.params;
     const { Nombre, Usuario, Clave } = req.body;
 
-    db.query('UPDATE Usuarios SET Nombre = ?, Usuario = ?, Clave = ? WHERE IdUsuario = ?', [Nombre, Usuario, Clave, Id], (err, results) => {
+    db.query('UPDATE usuarios SET Nombre = ?, Usuario = ?, Clave = ? WHERE IdUsuario = ?', [Nombre, Usuario, Clave, Id], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Error al actualizar el usuario' });
         }
@@ -65,7 +65,7 @@ exports.updateUsuarios = (req, res) => {
 exports.deleteUsuarios = (req, res) => {
     const { id } = req.params;
 
-    db.query('DELETE FROM Usuarios WHERE IdUsuario = ?', [id], (err, results) => {
+    db.query('DELETE FROM usuarios WHERE IdUsuario = ?', [id], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Error al eliminar el usuario' });
         }
