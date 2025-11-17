@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
+const db = require('../db');
 
 /**
 * Crear un nuevo trabajo
@@ -10,9 +11,15 @@ const Service = require('./Service');
 const createTrabajo = ({ trabajoInput }) => new Promise(
   async (resolve, reject) => {
     try {
+      const { Nombre } = trabajoInput;
+      const [result] = await db.query(
+        'INSERT INTO Trabajos (Nombre) VALUES (?)',
+        [Nombre]
+      );
       resolve(Service.successResponse({
-        trabajoInput,
-      }));
+        IdTrabajo: result.insertId,
+        Nombre
+      }, 201));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -21,6 +28,7 @@ const createTrabajo = ({ trabajoInput }) => new Promise(
     }
   },
 );
+
 /**
 * Eliminar un trabajo
 *
@@ -30,9 +38,8 @@ const createTrabajo = ({ trabajoInput }) => new Promise(
 const deleteTrabajo = ({ id }) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        id,
-      }));
+      await db.query('DELETE FROM Trabajos WHERE IdTrabajo = ?', [id]);
+      resolve(Service.successResponse({}, 204));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -41,6 +48,7 @@ const deleteTrabajo = ({ id }) => new Promise(
     }
   },
 );
+
 /**
 * Obtener un trabajo por ID
 *
@@ -50,9 +58,12 @@ const deleteTrabajo = ({ id }) => new Promise(
 const getTrabajoById = ({ id }) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        id,
-      }));
+      const [rows] = await db.query('SELECT * FROM Trabajos WHERE IdTrabajo = ?', [id]);
+      if (rows.length === 0) {
+        reject(Service.rejectResponse('Trabajo no encontrado', 404));
+      } else {
+        resolve(Service.successResponse(rows[0]));
+      }
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -61,6 +72,7 @@ const getTrabajoById = ({ id }) => new Promise(
     }
   },
 );
+
 /**
 * Obtener todos los trabajos
 *
@@ -69,8 +81,8 @@ const getTrabajoById = ({ id }) => new Promise(
 const getTrabajos = () => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-      }));
+      const [rows] = await db.query('SELECT * FROM Trabajos');
+      resolve(Service.successResponse(rows));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -79,6 +91,7 @@ const getTrabajos = () => new Promise(
     }
   },
 );
+
 /**
 * Actualizar un trabajo
 *
@@ -89,10 +102,12 @@ const getTrabajos = () => new Promise(
 const updateTrabajo = ({ id, trabajoInput }) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        id,
-        trabajoInput,
-      }));
+      const { Nombre } = trabajoInput;
+      await db.query(
+        'UPDATE Trabajos SET Nombre = ? WHERE IdTrabajo = ?',
+        [Nombre, id]
+      );
+      resolve(Service.successResponse({}, 200));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',

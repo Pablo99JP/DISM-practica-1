@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
+const db = require('../db');
 
 /**
 * Crear un nuevo fichaje
@@ -10,9 +11,21 @@ const Service = require('./Service');
 const createFichaje = ({ fichajeInput }) => new Promise(
   async (resolve, reject) => {
     try {
+      const { FechaHoraEntrada, IdTrabajo, IdUsuario, GeolocalizacionLatitud, GeolocalizacionLongitud } = fichajeInput;
+      const [result] = await db.query(
+        'INSERT INTO Fichajes (FechaHoraEntrada, IdTrabajo, IdUsuario, GeolocalizacionLatitud, GeolocalizacionLongitud) VALUES (?, ?, ?, ?, ?)',
+        [FechaHoraEntrada, IdTrabajo, IdUsuario, GeolocalizacionLatitud, GeolocalizacionLongitud]
+      );
       resolve(Service.successResponse({
-        fichajeInput,
-      }));
+        IdFichaje: result.insertId,
+        FechaHoraEntrada,
+        FechaHoraSalida: null,
+        HorasTrabajadas: null,
+        IdTrabajo,
+        IdUsuario,
+        GeolocalizacionLatitud,
+        GeolocalizacionLongitud
+      }, 201));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -21,6 +34,7 @@ const createFichaje = ({ fichajeInput }) => new Promise(
     }
   },
 );
+
 /**
 * Eliminar un fichaje
 *
@@ -30,9 +44,8 @@ const createFichaje = ({ fichajeInput }) => new Promise(
 const deleteFichaje = ({ id }) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        id,
-      }));
+      await db.query('DELETE FROM Fichajes WHERE IdFichaje = ?', [id]);
+      resolve(Service.successResponse({}, 204));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -41,6 +54,7 @@ const deleteFichaje = ({ id }) => new Promise(
     }
   },
 );
+
 /**
 * Obtener un fichaje por ID
 *
@@ -50,9 +64,15 @@ const deleteFichaje = ({ id }) => new Promise(
 const getFichajeById = ({ id }) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        id,
-      }));
+      const [rows] = await db.query(
+        'SELECT f.*, t.Nombre AS NombreTrabajo FROM Fichajes f LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo WHERE f.IdFichaje = ?',
+        [id]
+      );
+      if (rows.length === 0) {
+        reject(Service.rejectResponse('Fichaje no encontrado', 404));
+      } else {
+        resolve(Service.successResponse(rows[0]));
+      }
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -61,6 +81,7 @@ const getFichajeById = ({ id }) => new Promise(
     }
   },
 );
+
 /**
 * Obtener fichajes con filtros opcionales
 *
@@ -72,11 +93,28 @@ const getFichajeById = ({ id }) => new Promise(
 const getFichajes = ({ usuario, desde, hasta }) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        usuario,
-        desde,
-        hasta,
-      }));
+      let query = 'SELECT f.*, t.Nombre AS NombreTrabajo FROM Fichajes f LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo WHERE 1=1';
+      const params = [];
+
+      if (usuario) {
+        query += ' AND f.IdUsuario = ?';
+        params.push(usuario);
+      }
+
+      if (desde) {
+        query += ' AND DATE(f.FechaHoraEntrada) >= ?';
+        params.push(desde);
+      }
+
+      if (hasta) {
+        query += ' AND DATE(f.FechaHoraEntrada) <= ?';
+        params.push(hasta);
+      }
+
+      query += ' ORDER BY f.FechaHoraEntrada DESC';
+
+      const [rows] = await db.query(query, params);
+      resolve(Service.successResponse(rows));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -85,6 +123,7 @@ const getFichajes = ({ usuario, desde, hasta }) => new Promise(
     }
   },
 );
+
 /**
 * Actualizar un fichaje
 *
@@ -95,10 +134,12 @@ const getFichajes = ({ usuario, desde, hasta }) => new Promise(
 const updateFichaje = ({ id, fichajeUpdate }) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        id,
-        fichajeUpdate,
-      }));
+      const { FechaHoraSalida, HorasTrabajadas } = fichajeUpdate;
+      await db.query(
+        'UPDATE Fichajes SET FechaHoraSalida = ?, HorasTrabajadas = ? WHERE IdFichaje = ?',
+        [FechaHoraSalida, HorasTrabajadas, id]
+      );
+      resolve(Service.successResponse({}, 200));
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
