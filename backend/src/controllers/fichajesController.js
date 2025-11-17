@@ -4,7 +4,10 @@ const db = require('../config/db');
 exports.getFichajes = (req, res) => {
     const { usuario, desde, hasta } = req.query;
 
-    let query = 'SELECT * FROM Fichajes WHERE 1=1';
+    let query = `SELECT * 
+    FROM Fichajes f 
+    LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo
+    WHERE 1=1`;
     const params = [];
 
     // Filtrar por usuario si se proporciona
@@ -93,12 +96,9 @@ exports.updateFichaje = (req, res) => {
 
     db.query(
         `UPDATE Fichajes 
-     SET FechaHoraEntrada = ?, FechaHoraSalida = ?, HorasTrabajadas = ?, 
-         IdTrabajo = ?, IdUsuario = ?, 
-         GeolocalizacionLatitud = ?, GeolocalizacionLongitud = ? 
+     SET  FechaHoraSalida = ?, HorasTrabajadas = ?
      WHERE IdFichaje = ?`,
-        [FechaHoraEntrada, FechaHoraSalida, HorasTrabajadas, IdTrabajo, IdUsuario,
-            GeolocalizacionLatitud, GeolocalizacionLongitud, id],
+        [FechaHoraSalida, HorasTrabajadas, id],
         (err, results) => {
             if (err) {
                 console.error('Error al actualizar fichaje:', err);
