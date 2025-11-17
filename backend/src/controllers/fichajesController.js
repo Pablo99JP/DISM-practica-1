@@ -4,8 +4,8 @@ const db = require('../config/db');
 exports.getFichajes = (req, res) => {
     const { usuario, desde, hasta } = req.query;
 
-    let query = `SELECT * 
-    FROM Fichajes f 
+    let query = `SELECT f.*, t.Nombre AS NombreTrabajo
+    FROM Fichajes f
     LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo
     WHERE 1=1`;
     const params = [];
