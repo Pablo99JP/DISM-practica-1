@@ -3,7 +3,7 @@ import { TabsPage } from './tabs.page';
 
 export const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
@@ -18,14 +18,9 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/registrar-fichaje',
+        redirectTo: 'registrar-fichaje',
         pathMatch: 'full',
       },
     ],
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/registrar-fichaje',
-    pathMatch: 'full',
   },
 ];

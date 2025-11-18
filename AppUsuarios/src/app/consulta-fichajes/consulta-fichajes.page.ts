@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent,
-  IonCard, IonCardContent, IonItem, IonLabel, IonList, IonDatetime, IonButton
+  IonCard, IonCardContent, IonItem, IonLabel, IonList, IonDatetime, IonButton, IonButtons, IonIcon
 } from '@ionic/angular/standalone';
 import { ApiService } from '../services/api';
 import { GeocodingService } from '../services/geocoding';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-consulta-fichajes',
@@ -16,23 +18,36 @@ import { GeocodingService } from '../services/geocoding';
   imports: [
     CommonModule, FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent,
-    IonCard, IonCardContent, IonItem, IonLabel, IonList, IonDatetime, IonButton
+    IonCard, IonCardContent, IonItem, IonLabel, IonList, IonDatetime, IonButton, IonButtons, IonIcon
   ],
 })
 export class ConsultaFichajesPage implements OnInit {
   fechaDesde: string = '';
   fechaHasta: string = '';
   fichajes: any[] = [];
-  userId: number = 1; // Usuario hardcoded por ahora
+  userId: number = 0;
 
   constructor(
     private apiService: ApiService,
-    private geocodingService: GeocodingService
+    private geocodingService: GeocodingService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    const currentUser = this.authService.getCurrentUser();
+    console.log('Usuario actual en consulta-fichajes:', currentUser);
+    if (currentUser) {
+      this.userId = currentUser.IdUsuario;
+      console.log('userId asignado:', this.userId);
+    }
     // Cargar fichajes del día actual al iniciar
     this.cargarFichajesDelDia();
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   cargarFichajesDelDia() {
@@ -54,9 +69,11 @@ export class ConsultaFichajesPage implements OnInit {
 
     const params = {
       usuario: this.userId,
-      desde: new Date(this.fechaDesde).toISOString().slice(0, 19).replace('T', ' '),
-      hasta: new Date(this.fechaHasta).toISOString().slice(0, 19).replace('T', ' ')
+      desde: new Date(this.fechaDesde).toISOString().split('T')[0],
+      hasta: new Date(this.fechaHasta).toISOString().split('T')[0]
     };
+
+    console.log('Params enviados a API:', params);
 
     this.apiService.getFichajes(params).subscribe({
       next: (fichajes) => {
