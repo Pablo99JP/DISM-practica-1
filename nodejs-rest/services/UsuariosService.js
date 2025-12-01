@@ -8,10 +8,11 @@ const db = require('../db');
 * usuarioInput UsuarioInput 
 * returns Usuario
 * */
-const createUsuario = ({ usuarioInput }) => new Promise(
+const createUsuario = (params) => new Promise(
   async (resolve, reject) => {
     try {
-      const { Nombre, Usuario, Clave } = usuarioInput;
+      const data = params.usuarioInput || params.body || params;
+      const { Nombre, Usuario, Clave } = data;
       const [result] = await db.query(
         'INSERT INTO Usuarios (Nombre, Usuario, Clave) VALUES (?, ?, ?)',
         [Nombre, Usuario, Clave]
@@ -101,10 +102,12 @@ const getUsuarios = () => new Promise(
 * usuarioInput UsuarioInput 
 * no response value expected for this operation
 * */
-const updateUsuario = ({ id, usuarioInput }) => new Promise(
+const updateUsuario = (params) => new Promise(
   async (resolve, reject) => {
     try {
-      const { Nombre, Usuario, Clave } = usuarioInput;
+      const { id } = params;
+      const data = params.usuarioInput || params.body || params;
+      const { Nombre, Usuario, Clave } = data;
       await db.query(
         'UPDATE Usuarios SET Nombre = ?, Usuario = ?, Clave = ? WHERE IdUsuario = ?',
         [Nombre, Usuario, Clave, id]

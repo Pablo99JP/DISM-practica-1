@@ -8,10 +8,12 @@ const db = require('../db');
 * fichajeInput FichajeInput 
 * returns Fichaje
 * */
-const createFichaje = ({ fichajeInput }) => new Promise(
+const createFichaje = (params) => new Promise(
   async (resolve, reject) => {
     try {
-      const { FechaHoraEntrada, IdTrabajo, IdUsuario, GeolocalizacionLatitud, GeolocalizacionLongitud } = fichajeInput;
+      // Aceptar tanto fichajeInput como body directamente
+      const data = params.fichajeInput || params.body || params;
+      const { FechaHoraEntrada, IdTrabajo, IdUsuario, GeolocalizacionLatitud, GeolocalizacionLongitud } = data;
       const [result] = await db.query(
         'INSERT INTO Fichajes (FechaHoraEntrada, IdTrabajo, IdUsuario, GeolocalizacionLatitud, GeolocalizacionLongitud) VALUES (?, ?, ?, ?, ?)',
         [FechaHoraEntrada, IdTrabajo, IdUsuario, GeolocalizacionLatitud, GeolocalizacionLongitud]
@@ -93,7 +95,7 @@ const getFichajeById = ({ id }) => new Promise(
 const getFichajes = ({ usuario, desde, hasta }) => new Promise(
   async (resolve, reject) => {
     try {
-      let query = 'SELECT f.*, t.Nombre AS NombreTrabajo FROM Fichajes f LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo WHERE 1=1';
+      let query = 'SELECT f.*, t.Nombre AS NombreTrabajo, u.NombreUsuario FROM Fichajes f LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo LEFT JOIN Usuarios u ON f.IdUsuario = u.IdUsuario WHERE 1=1';
       const params = [];
 
       if (usuario) {
@@ -131,10 +133,12 @@ const getFichajes = ({ usuario, desde, hasta }) => new Promise(
 * fichajeUpdate FichajeUpdate 
 * no response value expected for this operation
 * */
-const updateFichaje = ({ id, fichajeUpdate }) => new Promise(
+const updateFichaje = (params) => new Promise(
   async (resolve, reject) => {
     try {
-      const { FechaHoraSalida, HorasTrabajadas } = fichajeUpdate;
+      const { id } = params;
+      const data = params.fichajeUpdate || params.body || params;
+      const { FechaHoraSalida, HorasTrabajadas } = data;
       await db.query(
         'UPDATE Fichajes SET FechaHoraSalida = ?, HorasTrabajadas = ? WHERE IdFichaje = ?',
         [FechaHoraSalida, HorasTrabajadas, id]

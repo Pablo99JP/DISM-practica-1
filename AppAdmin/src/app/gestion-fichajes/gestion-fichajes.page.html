@@ -36,7 +36,7 @@
     <ion-item *ngFor="let fichaje of fichajesFiltrados">
       <ion-label>
         <h2>{{ fichaje.NombreTrabajo || 'Sin trabajo' }}</h2>
-        <p><strong>Usuario ID:</strong> {{ fichaje.IdUsuario }}</p>
+        <p><strong>Usuario:</strong> {{ fichaje.NombreUsuario || 'Usuario ' + fichaje.IdUsuario }}</p>
         <p><strong>Entrada:</strong> {{ fichaje.FechaHoraEntrada | date:'short' }}</p>
         <p *ngIf="fichaje.FechaHoraSalida">
           <strong>Salida:</strong> {{ fichaje.FechaHoraSalida | date:'short' }}

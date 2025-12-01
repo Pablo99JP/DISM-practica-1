@@ -8,10 +8,11 @@ const db = require('../db');
 * trabajoInput TrabajoInput 
 * returns Trabajo
 * */
-const createTrabajo = ({ trabajoInput }) => new Promise(
+const createTrabajo = (params) => new Promise(
   async (resolve, reject) => {
     try {
-      const { Nombre } = trabajoInput;
+      const data = params.trabajoInput || params.body || params;
+      const { Nombre } = data;
       const [result] = await db.query(
         'INSERT INTO Trabajos (Nombre) VALUES (?)',
         [Nombre]
@@ -99,10 +100,12 @@ const getTrabajos = () => new Promise(
 * trabajoInput TrabajoInput 
 * no response value expected for this operation
 * */
-const updateTrabajo = ({ id, trabajoInput }) => new Promise(
+const updateTrabajo = (params) => new Promise(
   async (resolve, reject) => {
     try {
-      const { Nombre } = trabajoInput;
+      const { id } = params;
+      const data = params.trabajoInput || params.body || params;
+      const { Nombre } = data;
       await db.query(
         'UPDATE Trabajos SET Nombre = ? WHERE IdTrabajo = ?',
         [Nombre, id]

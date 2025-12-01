@@ -57,8 +57,8 @@ export class GestionFichajesPage implements OnInit {
     }
 
     const params = {
-      desde: new Date(this.fechaDesde).toISOString().slice(0, 19).replace('T', ' '),
-      hasta: new Date(this.fechaHasta).toISOString().slice(0, 19).replace('T', ' ')
+      desde: new Date(this.fechaDesde).toISOString().slice(0, 10),
+      hasta: new Date(this.fechaHasta).toISOString().slice(0, 10)
     };
 
     this.apiService.getFichajes(params).subscribe({
