@@ -1,22 +1,39 @@
+/**
+ * SERVICIO DE GESTIÓN DE USUARIOS
+ * ================================
+ * Este módulo maneja todas las operaciones CRUD para usuarios.
+ * 
+ * CRUD significa:
+ * - Create (Crear): POST /usuarios
+ * - Read (Leer): GET /usuarios, GET /usuarios/:id
+ * - Update (Actualizar): PUT /usuarios/:id
+ * - Delete (Eliminar): DELETE /usuarios/:id
+ */
+
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
 const db = require('../db');
 
 /**
-* Crear un nuevo usuario
-*
-* usuarioInput UsuarioInput 
-* returns Usuario
-* */
+ * Crear un nuevo usuario
+ * 
+ * @param {Object} params - Datos del usuario
+ * @returns {Promise} Promise con el usuario creado
+ * 
+ */
 const createUsuario = (params) => new Promise(
   async (resolve, reject) => {
     try {
       const data = params.usuarioInput || params.body || params;
       const { Nombre, Usuario, Clave } = data;
+      
+      // INSERT con prepared statements (? = placeholder)
       const [result] = await db.query(
         'INSERT INTO Usuarios (Nombre, Usuario, Clave) VALUES (?, ?, ?)',
         [Nombre, Usuario, Clave]
       );
+      
+      // Retornar usuario creado con ID generado
       resolve(Service.successResponse({
         IdUsuario: result.insertId,
         Nombre,
@@ -36,7 +53,7 @@ const createUsuario = (params) => new Promise(
 * Eliminar un usuario
 *
 * id Integer 
-* no response value expected for this operation
+* 
 * */
 const deleteUsuario = ({ id }) => new Promise(
   async (resolve, reject) => {
@@ -99,8 +116,7 @@ const getUsuarios = () => new Promise(
 * Actualizar un usuario
 *
 * id Integer 
-* usuarioInput UsuarioInput 
-* no response value expected for this operation
+* 
 * */
 const updateUsuario = (params) => new Promise(
   async (resolve, reject) => {

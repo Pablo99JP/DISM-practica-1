@@ -1,22 +1,39 @@
+/**
+ * SERVICIO DE GESTIÓN DE TRABAJOS
+ * ================================
+ * Este módulo maneja las operaciones CRUD para trabajos/proyectos.
+ * Los trabajos son las tareas o proyectos donde los usuarios fichean.
+ * 
+ * Patrón utilizado: Repository Pattern
+ * - Separa la lógica de negocio de la capa de acceso a datos
+ * - Facilita testing y mantenimiento
+ */
+
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
 const db = require('../db');
 
 /**
-* Crear un nuevo trabajo
-*
-* trabajoInput TrabajoInput 
-* returns Trabajo
-* */
+ * Crear un nuevo trabajo
+ * 
+ * @param {Object} params - Datos del trabajo
+ * @returns {Promise} Promise con el trabajo creado
+ * 
+ * Los trabajos son simples: solo tienen un nombre
+ * Podrían extenderse con: descripción, fecha inicio/fin, presupuesto, etc.
+ */
 const createTrabajo = (params) => new Promise(
   async (resolve, reject) => {
     try {
       const data = params.trabajoInput || params.body || params;
       const { Nombre } = data;
+      
+      // INSERT simple con un solo campo
       const [result] = await db.query(
         'INSERT INTO Trabajos (Nombre) VALUES (?)',
         [Nombre]
       );
+      
       resolve(Service.successResponse({
         IdTrabajo: result.insertId,
         Nombre
