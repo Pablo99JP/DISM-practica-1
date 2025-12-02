@@ -223,7 +223,6 @@ paths:
         name: desde
         required: false
         schema:
-          format: date
           type: string
         style: form
       - description: Fecha final (YYYY-MM-DD)
@@ -232,7 +231,6 @@ paths:
         name: hasta
         required: false
         schema:
-          format: date
           type: string
         style: form
       responses:

@@ -131,7 +131,7 @@ const getFichajes = ({ usuario, desde, hasta }) => new Promise(
     try {
       // Query base: SELECT con JOINs para obtener nombres relacionados
       // LEFT JOIN: Si no hay relación, aún muestra el fichaje (con NULL en campos relacionados)
-      let query = 'SELECT f.*, t.Nombre AS NombreTrabajo, u.NombreUsuario FROM Fichajes f LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo LEFT JOIN Usuarios u ON f.IdUsuario = u.IdUsuario WHERE 1=1';
+      let query = 'SELECT f.*, t.Nombre AS NombreTrabajo, u.Nombre AS NombreUsuario FROM Fichajes f LEFT JOIN Trabajos t ON f.IdTrabajo = t.IdTrabajo LEFT JOIN Usuarios u ON f.IdUsuario = u.IdUsuario WHERE 1=1';
       const params = [];
 
       // Construcción dinámica de filtros
